@@ -1,179 +1,228 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Main Page</title>
-		<style>
-			html, body {
-				height: 100%;
-			}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
 
-			body {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				background-color: #f1f1f1;
-				transition: background-color 0.5s ease;
-			}
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f1f1f1;
+            transition: background-color 0.5s ease;
+        }
 
-			.container {
-				width: 800px;
-				border: 2px solid #ccc;
-				padding: 10px;
-				display: flex;
-				flex-direction: row;
-				justify-content: space-between;
-				align-items: flex-start;
-				background-color: #fff;
-				transition: background-color 0.5s ease; 
-			}
+        .container {
+            width: 800px;
+            border: 2px solid #ccc;
+            padding: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            background-color: #fff;
+            transition: background-color 0.5s ease; 
+        }
 
-			.register-box {
-				width: 400px;
-				padding: 10px;
-			}
+        .register-box {
+            width: 400px;
+            padding: 10px;
+        }
 
-			h3 {
-				color: #f00;
-				font-size: 24px; 
-			}
+        h3 {
+            color: #f00;
+            font-size: 24px; 
+        }
 
-			label {
-				color: #00f;
-				font-size: 18px; 
-			}
+        label {
+            color: #00f;
+            font-size: 18px; 
+        }
 
-			.buttons {
-				display: flex;
-				justify-content: space-between;
-				width: 100%;
-				margin-bottom: 10px;
-			}
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 10px;
+        }
 
-			.table-container {
-				width: 400px;
-			}
+        .table-container {
+            width: 400px;
+        }
 
-			table {
-				width: 100%;
-				border-collapse: collapse;
-			}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-			th, td {
-				border: 1px solid #ccc;
-				padding: 5px;
-				text-align: center;
-			}
+        th, td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: center;
+        }
 
-			.empty-db-msg {
-				margin-top: 10px;
-				font-size: 14px;
-				color: #999;
-			}
-		</style>
-		<script>
-			function changeBackgroundColor() {
-				var colors = ["#ebedf0", "#f1f8ff", "#fffdef"];
-				var randomColor = colors[Math.floor(Math.random() * colors.length)];
-				document.body.style.backgroundColor = randomColor;
-				document.querySelector('.container').style.backgroundColor = randomColor;
-			}
+        .empty-db-msg {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
+    <script>
+        function changeBackgroundColor() {
+            var colors = ["#ebedf0", "#f1f8ff", "#fffdef"];
+            var randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.body.style.backgroundColor = randomColor;
+            document.querySelector('.container').style.backgroundColor = randomColor;
+        }
 
-			setInterval(changeBackgroundColor, 3000);
+        setInterval(changeBackgroundColor, 3000);
 
-			function registerStudent(event) {
-				event.preventDefault();
+        function validateName(name) {
+            // Check if the name has a space character
+            if (name.indexOf(' ') === -1) {
+                return false;
+            }
 
-				var studName = document.getElementById('studName').value;
-				var exam1 = document.getElementById('exam1').value;
-				var exam2 = document.getElementById('exam2').value;
-				var exam3 = document.getElementById('exam3').value;
+            // Split the name into first and last name
+            var names = name.split(' ');
+            var firstName = names[0];
+            var lastName = names[names.length - 1];
 
-				if (!studName || !exam1 || !exam2 || !exam3) {
-					document.getElementById('error').textContent = 'Invalid input.';
-					document.getElementById('success').textContent = '';
-					return;
-				}
+            // Check if the first and last name are equal
+            if (firstName.toLowerCase() === lastName.toLowerCase()) {
+                return false;
+            }
 
-				var student = {
-					studName: studName,
-					exam1: exam1,
-					exam2: exam2,
-					exam3: exam3
-				};
+            return true;
+        }
 
-				var students = JSON.parse(localStorage.getItem('students')) || [];
-				students.push(student);
-				localStorage.setItem('students', JSON.stringify(students));
+        function validateGrade(grade) {
+            return !isNaN(grade) && grade >= 0 && grade <= 100;
+        }
 
-				document.getElementById('error').textContent = '';
-				document.getElementById('success').textContent = 'Student registered successfully.';
-				document.getElementById('registerForm').reset();
-			}
+        function registerStudent(event) {
+            event.preventDefault();
 
-			function viewLocalStorage() {
-				var students = JSON.parse(localStorage.getItem('students'));
-				var studentTable = document.getElementById('studentTable');
-				studentTable.innerHTML = '';
+            var studName = document.getElementById('studName').value;
+            var exam1 = document.getElementById('exam1').value;
+            var exam2 = document.getElementById('exam2').value;
+            var exam3 = document.getElementById('exam3').value;
 
-				if (!students || students.length === 0) {
-					studentTable.innerHTML = '<tr><td colspan="4" class="empty-db-msg">The DB is empty.</td></tr>';
-					return;
-				}
+            var errorDiv = document.getElementById('error');
+            var successDiv = document.getElementById('success');
 
-				var tableHeader = document.createElement('tr');
-				tableHeader.innerHTML = '<th>Name</th><th>Exam I</th><th>Exam II</th><th>Exam III</th>';
-				studentTable.appendChild(tableHeader);
+            if (!validateName(studName)) {
+                errorDiv.textContent = 'Invalid name. Please enter a valid full name.';
+                successDiv.textContent = '';
+                return;
+            }
 
-				// Populate table with student data
-				students.forEach(function(student) {
-					var tableRow = document.createElement('tr');
-					tableRow.innerHTML = '<td>' + student.studName + '</td><td>' + student.exam1 + '</td><td>' + student.exam2 + '</td><td>' + student.exam3 + '</td>';
-					studentTable.appendChild(tableRow);
-				});
-			}
+            if (!validateGrade(exam1) || !validateGrade(exam2) || !validateGrade(exam3)) {
+                errorDiv.textContent = 'Invalid grade(s). Please enter a number between 0 and 100 for each exam.';
+                successDiv.textContent = '';
+                return;
+            }
 
-			function deleteLocalStorage() {
-				localStorage.removeItem('students');
-				viewLocalStorage();
-			}
-		</script>
-	</head>
-	<body>
-		<div class="container">
-			<div class="register-box">
-				<h3>Register Student</h3>
-				<form id="registerForm" onsubmit="registerStudent(event)">
-					<label for="studName">Student name:</label>
-					<input type="text" id="studName" name="studName" required><br><br>
-					
-					<label for="exam1">Grade Exam I:</label>
-					<input type="number" id="exam1" name="Grade Exam I" required><br><br>
-					
-					<label for="exam2">Grade Exam II:</label>
-					<input type="number" id="exam2" name="Grade Exam II" required><br><br>
-					
-					<label for="exam3">Grade Exam III:</label>
-					<input type="number" id="exam3" name="Grade Exam III" required><br><br>
-					
-					<input type="submit" value="Register">
+            var student = {
+                studName: studName,
+                exam1: exam1,
+                exam2: exam2,
+                exam3: exam3
+            };
 
-					<div id="success"></div>
-					
-					<div id="error"></div>
-				</form>
-			</div>
+            var students = JSON.parse(localStorage.getItem('students')) || [];
 
-			<div class="table-container">
-				<div class="buttons">
-					<button onclick="viewLocalStorage()">View Students</button>
-					<button onclick="deleteLocalStorage()">Delete Database</button>
-				</div>
+            // Check for duplicate entries
+            var duplicateEntry = students.some(function(existingStudent) {
+                return (
+                    existingStudent.studName.toLowerCase() === student.studName.toLowerCase() &&
+                    existingStudent.exam1 === student.exam1 &&
+                    existingStudent.exam2 === student.exam2 &&
+                    existingStudent.exam3 === student.exam3
+                );
+            });
 
-				<table id="studentTable"></table>
-			</div>
-		</div>
-	</body>
+            if (duplicateEntry) {
+                errorDiv.textContent = 'Duplicate entry. The same name and grades already exist.';
+                successDiv.textContent = '';
+                return;
+            }
+
+            students.push(student);
+            localStorage.setItem('students', JSON.stringify(students));
+
+            errorDiv.textContent = '';
+            successDiv.textContent = 'Student registered successfully.';
+            document.getElementById('registerForm').reset();
+        }
+
+        function viewLocalStorage() {
+            var students = JSON.parse(localStorage.getItem('students'));
+            var studentTable = document.getElementById('studentTable');
+            studentTable.innerHTML = '';
+
+            if (!students || students.length === 0) {
+                studentTable.innerHTML = '<tr><td colspan="4" class="empty-db-msg">The DB is empty.</td></tr>';
+                return;
+            }
+
+            var tableHeader = document.createElement('tr');
+            tableHeader.innerHTML = '<th>Name</th><th>Exam I</th><th>Exam II</th><th>Exam III</th>';
+            studentTable.appendChild(tableHeader);
+
+            // Populate table with student data
+            students.forEach(function(student) {
+                var tableRow = document.createElement('tr');
+                tableRow.innerHTML = '<td>' + student.studName + '</td><td>' + student.exam1 + '</td><td>' + student.exam2 + '</td><td>' + student.exam3 + '</td>';
+                studentTable.appendChild(tableRow);
+            });
+        }
+
+        function deleteLocalStorage() {
+            localStorage.removeItem('students');
+            viewLocalStorage();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="register-box">
+            <h3>Register Student</h3>
+            <form id="registerForm" onsubmit="registerStudent(event)">
+                <label for="studName">Student name:</label>
+                <input type="text" id="studName" name="studName" required><br><br>
+                
+                <label for="exam1">Grade Exam I:</label>
+                <input type="number" id="exam1" name="Grade Exam I" required><br><br>
+                
+                <label for="exam2">Grade Exam II:</label>
+                <input type="number" id="exam2" name="Grade Exam II" required><br><br>
+                
+                <label for="exam3">Grade Exam III:</label>
+                <input type="number" id="exam3" name="Grade Exam III" required><br><br>
+                
+                <input type="submit" value="Register">
+
+                <div id="success"></div>
+                
+                <div id="error"></div>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <div class="buttons">
+                <button onclick="viewLocalStorage()">View Students</button>
+                <button onclick="deleteLocalStorage()">Delete Database</button>
+            </div>
+
+            <table id="studentTable"></table>
+        </div>
+    </div>
+</body>
 </html>
