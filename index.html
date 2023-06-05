@@ -84,17 +84,14 @@
         setInterval(changeBackgroundColor, 3000);
 
         function validateName(name) {
-            // Check if the name has a space character
-            if (name.indexOf(' ') === -1) {
+            if (name.indexOf(' ') === -1 || (name.match(/^[A-Za-z]+$/))) {
                 return false;
-            }
+            }	
 
-            // Split the name into first and last name
             var names = name.split(' ');
             var firstName = names[0];
             var lastName = names[names.length - 1];
 
-            // Check if the first and last name are equal
             if (firstName.toLowerCase() === lastName.toLowerCase()) {
                 return false;
             }
@@ -138,7 +135,6 @@
 
             var students = JSON.parse(localStorage.getItem('students')) || [];
 
-            // Check for duplicate entries
             var duplicateEntry = students.some(function(existingStudent) {
                 return (
                     existingStudent.studName.toLowerCase() === student.studName.toLowerCase() &&
@@ -176,7 +172,6 @@
             tableHeader.innerHTML = '<th>Name</th><th>Exam I</th><th>Exam II</th><th>Exam III</th>';
             studentTable.appendChild(tableHeader);
 
-            // Populate table with student data
             students.forEach(function(student) {
                 var tableRow = document.createElement('tr');
                 tableRow.innerHTML = '<td>' + student.studName + '</td><td>' + student.exam1 + '</td><td>' + student.exam2 + '</td><td>' + student.exam3 + '</td>';
