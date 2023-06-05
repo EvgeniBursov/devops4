@@ -15,12 +15,24 @@ jobs:
     executor: my-exe
     steps:
     - checkout
-    - run: npm install
-    - run: npm rebuild
-    - run: npm test
-
+    - run: 
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Rebuild
+          command: npm rebuild
+      - run: 
+          name: Check Linting
+          command: npm run lint
+      - run: 
+          name: Check Tests
+          command:  npm run test
+      - run:
+          name: Upload App
+          command: curl devopsstudproject.azurewebsites.net
+          
 workflows:
       my-workflow:
         jobs:
           - test
-          
+
