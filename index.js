@@ -2,13 +2,18 @@
 const express = require('express');
 
 // eslint-disable-next-line import/no-extraneous-dependencies, import/newline-after-import
+const path = require('path');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const bodyParser = require('body-parser');
+
 const app = express();
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.listen(process.env.PORT, () => {
-  console.log('Server Started');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
