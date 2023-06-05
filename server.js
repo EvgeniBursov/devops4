@@ -13,10 +13,4 @@ app.get('/test', (req, res) => {
   res.send('Test Hello');
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
-});
-
 module.exports = app;
