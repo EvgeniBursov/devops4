@@ -27,10 +27,7 @@ jobs:
       - run: 
           name: Check Tests
           command:  npm run test
-      - run:
-          name: Upload App
-          command: curl devopsstudproject.azurewebsites.net
-          
+
 workflows:
       my-workflow:
         jobs:
